@@ -26,7 +26,7 @@ pipeline {
         stage('1. Checkout') {
             steps {
                 checkout scm
-                sh '''
+                sh '''#!/usr/bin/env bash
                     echo "Checked out commit: $(git rev-parse --short HEAD 2>/dev/null || echo 'local')"
                     ls -la
                 '''
@@ -35,7 +35,7 @@ pipeline {
 
         stage('2. Validate Application & Configuration') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     test -f docker/Dockerfile
                     test -f app/index.html.template
@@ -56,7 +56,7 @@ pipeline {
 
         stage('3. Build Docker Image for Green / v2') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     docker build \
                       -f docker/Dockerfile \
@@ -72,7 +72,7 @@ pipeline {
 
         stage('4. Validate & Test Green Image') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     TEST_CTR="vle8-green-smoke-${BUILD_NUMBER}"
                     cleanup() {
@@ -101,7 +101,7 @@ pipeline {
 
         stage('5. Deploy Green to Kubernetes') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     bash scripts/load-image-minikube.sh "${GREEN_IMAGE}"
                     kubectl apply -f kubernetes/namespace.yaml
@@ -113,7 +113,7 @@ pipeline {
 
         stage('6. Wait for Green Rollout') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     kubectl rollout status -n "${KUBE_NAMESPACE}" deployment/myapp-green --timeout=180s
                     kubectl get deployments -n "${KUBE_NAMESPACE}"
@@ -124,7 +124,7 @@ pipeline {
 
         stage('7. Verify Green Application Independently') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     echo "Confirming production service selector BEFORE switching:"
                     kubectl get service myapp-service -n "${KUBE_NAMESPACE}" -o jsonpath='{.spec.selector}'; echo
@@ -146,7 +146,7 @@ pipeline {
 
         stage('9. Switch Service Selector from Blue to Green') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     bash scripts/switch-to-green.sh
                 '''
@@ -155,7 +155,7 @@ pipeline {
 
         stage('10. Verify Production Traffic Returns GREEN / v2') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     sleep 2
                     bash scripts/verify-deployment.sh "${PROD_URL}" "GREEN" "v2"
@@ -165,7 +165,7 @@ pipeline {
 
         stage('11. Report Deployment Status') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
                     set -euo pipefail
                     echo "=== Final VLE-8 Blue-Green Deployment Status ==="
                     kubectl get deployments,pods,svc,endpoints -n "${KUBE_NAMESPACE}" -o wide
@@ -179,7 +179,7 @@ pipeline {
 
     post {
         failure {
-            sh '''
+            sh '''#!/usr/bin/env bash
                 echo "=== PIPELINE FAILED — DIAGNOSTICS ==="
                 kubectl get events -n "${KUBE_NAMESPACE}" --sort-by='.lastTimestamp' | tail -n 20 || true
                 kubectl get pods -n "${KUBE_NAMESPACE}" -o wide || true
