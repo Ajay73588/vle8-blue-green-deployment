@@ -3,7 +3,8 @@
 **Project:** VLE-8 — Blue-Green Deployment using DevOps Tools  
 **Workspace:** `c:\Users\LENOVO\Downloads\vle 8`  
 **AWS Region:** `ap-south-1` (Mumbai)  
-**EC2 Instance:** `i-07f04268b828911fc` (`c7i-flex.large`, Public IP `43.204.37.176`)
+**EC2 Instance:** `i-07f04268b828911fc` (`c7i-flex.large`, Public IP `43.204.37.176`)  
+**GitHub Repository:** `https://github.com/Ajay73588/vle8-blue-green-deployment`
 
 ## Phase Status
 
@@ -15,10 +16,10 @@
 | Phase 4 | Configure Ubuntu with Ansible | **Completed** | Java 21, Jenkins 2.580.2, Docker 29.9.3, kubectl v1.32.13, Minikube v1.37.0 (containerd), Nginx, and auto-resume systemd service verified. |
 | Phase 5 | Build demonstration app and Docker images | **Completed** | Built & smoke-tested `myapp:v1` (BLUE) and `myapp:v2` (GREEN), loaded both into Minikube containerd. |
 | Phase 6 | Configure Kubernetes Blue and Green environments | **Completed** | `myapp-blue` (2/2) and `myapp-green` (2/2) running simultaneously; `myapp-service` routes to Blue (`BLUE / v1`); Green verified independently via port-forward. |
-| Phase 7 | Configure Jenkins CI/CD pipeline | **In Progress** | Installing Jenkins plugins, admin user, and `vle8-blue-green-pipeline` job. |
-| Phase 8 | GitHub repository & webhook integration | Pending | Ready to create `Ajay73588/vle8-blue-green-deployment` and configure webhook. |
-| Phase 9 | Execute Blue-Green switching and rollback | Pending | — |
-| Phase 10 | Documentation, evidence, faculty demo & viva prep | Pending | Initial `ARCHITECTURE.md`, `FACULTY_DEMO.md`, `README.md` written. |
+| Phase 7 | Configure Jenkins CI/CD pipeline | **Completed** | Installed plugins (`workflow-aggregator`, `git`, `github`, `credentials-binding`, `timestamper`, `ws-cleanup`), configured `vle8admin`, created credential `vle8-deploy-env`, and configured `vle8-blue-green-pipeline`. |
+| Phase 8 | GitHub repository & webhook integration | **In Progress** | Created `Ajay73588/vle8-blue-green-deployment`, pushed initial commit, created GitHub Webhook (ID `710369768`, ping `200 OK`); triggering push delivery test now. |
+| Phase 9 | Execute Blue-Green switching and rollback | Pending | Will run end-to-end Jenkins pipeline + manual approval + switch + rollback. |
+| Phase 10 | Documentation, evidence, faculty demo & viva prep | Pending | Finalizing test results, genuine screenshots, and `docs/IMPLEMENTATION.md`. |
 
 ## Current Blockers
-- None.
+- Fixing headless Edge screenshot flag so genuine PNG screenshots can be captured cleanly.

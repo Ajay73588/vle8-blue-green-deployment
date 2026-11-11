@@ -12,6 +12,7 @@ pipeline {
     }
 
     environment {
+        DEPLOY_ENV       = credentials('vle8-deploy-env')
         KUBE_NAMESPACE   = 'vle8-app'
         APP_NAME         = 'VLE-8 Blue-Green Deployment'
         IMAGE_REPO       = 'myapp'
