@@ -1,0 +1,27 @@
+﻿=== Kubernetes state AFTER switching to GREEN ===
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES        SELECTOR
+deployment.apps/myapp-blue    2/2     2            2           15m   myapp        myapp:v1      app=myapp,color=blue
+deployment.apps/myapp-green   2/2     2            2           15m   myapp        myapp:v2-b3   app=myapp,color=green
+
+NAME                               READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+pod/myapp-blue-58f57dcff9-9rm4s    1/1     Running   0          15m     10.244.0.3    minikube   <none>           <none>
+pod/myapp-blue-58f57dcff9-r74qm    1/1     Running   0          15m     10.244.0.4    minikube   <none>           <none>
+pod/myapp-green-5b5cbd6954-jr572   1/1     Running   0          2m58s   10.244.0.9    minikube   <none>           <none>
+pod/myapp-green-5b5cbd6954-jxth2   1/1     Running   0          2m51s   10.244.0.10   minikube   <none>           <none>
+
+NAME                    TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+service/myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   15m   app=myapp,color=green
+
+NAME                      ENDPOINTS                      AGE
+endpoints/myapp-service   10.244.0.10:80,10.244.0.9:80   15m
+=== myapp-service selector ===
+{"app":"myapp","color":"green"}
+=== Production endpoint check (3 requests to show round-robin across Green pods) ===
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"myapp-green-5b5cbd6954-jxth2","build":"v2-b3","started_at":"2026-11-11T13:12:04Z"}
+
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"myapp-green-5b5cbd6954-jr572","build":"v2-b3","started_at":"2026-11-11T13:11:58Z"}
+
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"myapp-green-5b5cbd6954-jr572","build":"v2-b3","started_at":"2026-11-11T13:11:58Z"}
+
+{"app":"VLE-8 Blue-Green Deployment","color":"GREEN","selector":{"app":"myapp","color":"green"},"version":"v2","pod":"myapp-green-5b5cbd6954-jr572","build":"v2-b3","started_at":"2026-11-11T13:11:58Z","release_note":"Green environment (v2) is active. This release introduces the updated Green theme and verified rollout candidate."}
+

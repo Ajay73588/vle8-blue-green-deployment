@@ -1,0 +1,27 @@
+﻿=== Kubernetes state while Jenkins Build #3 paused at Stage 8 ===
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES        SELECTOR
+deployment.apps/myapp-blue    2/2     2            2           14m   myapp        myapp:v1      app=myapp,color=blue
+deployment.apps/myapp-green   2/2     2            2           14m   myapp        myapp:v2-b3   app=myapp,color=green
+
+NAME                               READY   STATUS    RESTARTS   AGE   IP            NODE       NOMINATED NODE   READINESS GATES
+pod/myapp-blue-58f57dcff9-9rm4s    1/1     Running   0          14m   10.244.0.3    minikube   <none>           <none>
+pod/myapp-blue-58f57dcff9-r74qm    1/1     Running   0          14m   10.244.0.4    minikube   <none>           <none>
+pod/myapp-green-5b5cbd6954-jr572   1/1     Running   0          94s   10.244.0.9    minikube   <none>           <none>
+pod/myapp-green-5b5cbd6954-jxth2   1/1     Running   0          87s   10.244.0.10   minikube   <none>           <none>
+
+NAME                    TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+service/myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   14m   app=myapp,color=blue
+
+NAME                      ENDPOINTS                     AGE
+endpoints/myapp-service   10.244.0.3:80,10.244.0.4:80   14m
+=== myapp-service selector ===
+{"app":"myapp","color":"blue"}
+=== Independent Green Port-Forward Verification via Script ===
+Testing Green deployment independently via kubectl port-forward (no production traffic change)...
+Independent Green /health response: {"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"myapp-green-5b5cbd6954-jr572","build":"v2-b3","started_at":"2026-11-11T13:11:58Z"}
+Independent Green verification PASSED without routing production traffic.
+=== Production endpoint STILL BLUE v1 ===
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"myapp-blue-58f57dcff9-r74qm","build":"blue-v1","started_at":"2026-11-11T12:59:22Z"}
+
+{"app":"VLE-8 Blue-Green Deployment","color":"BLUE","selector":{"app":"myapp","color":"blue"},"version":"v1","pod":"myapp-blue-58f57dcff9-r74qm","build":"blue-v1","started_at":"2026-11-11T12:59:22Z","release_note":"Blue environment (v1) is serving stable baseline traffic routed by Kubernetes Service myapp-service."}
+

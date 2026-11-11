@@ -1,0 +1,57 @@
+﻿=== Executing Rollback to BLUE (scripts/switch-to-blue.sh) ===
+Verifying BLUE deployment readiness before switching traffic...
+Switching myapp-service selector to color=blue...
+service/myapp-service patched
+NAME            TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   15m   app=myapp,color=blue
+NAME            ENDPOINTS                     AGE
+myapp-service   10.244.0.3:80,10.244.0.4:80   15m
+=== Verifying Production Returns BLUE / v1 ===
+=== Kubernetes Cluster & Workload Status ===
+NAME       STATUS   ROLES           AGE   VERSION
+minikube   Ready    control-plane   17m   v1.37.0
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+myapp-blue    2/2     2            2           15m
+myapp-green   2/2     2            2           15m
+NAME                           READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+myapp-blue-58f57dcff9-9rm4s    1/1     Running   0          15m     10.244.0.3    minikube   <none>           <none>
+myapp-blue-58f57dcff9-r74qm    1/1     Running   0          15m     10.244.0.4    minikube   <none>           <none>
+myapp-green-5b5cbd6954-jr572   1/1     Running   0          3m17s   10.244.0.9    minikube   <none>           <none>
+myapp-green-5b5cbd6954-jxth2   1/1     Running   0          3m10s   10.244.0.10   minikube   <none>           <none>
+NAME            TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   15m
+NAME            ENDPOINTS                     AGE
+myapp-service   10.244.0.3:80,10.244.0.4:80   15m
+=== Service Selector ===
+{"app":"myapp","color":"blue"}
+=== Live HTTP Health & Info (http://127.0.0.1) ===
+Health: {"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"myapp-blue-58f57dcff9-9rm4s","build":"blue-v1","started_at":"2026-11-11T12:59:22Z"}
+Info:   {"app":"VLE-8 Blue-Green Deployment","color":"BLUE","selector":{"app":"myapp","color":"blue"},"version":"v1","pod":"myapp-blue-58f57dcff9-r74qm","build":"blue-v1","started_at":"2026-11-11T12:59:22Z","release_note":"Blue environment (v1) is serving stable baseline traffic routed by Kubernetes Service myapp-service."}
+Verification PASSED.
+=== Round-Robin Check Across Both BLUE Replicas ===
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"myapp-blue-58f57dcff9-9rm4s","build":"blue-v1","started_at":"2026-11-11T12:59:22Z"}
+
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"myapp-blue-58f57dcff9-9rm4s","build":"blue-v1","started_at":"2026-11-11T12:59:22Z"}
+
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"myapp-blue-58f57dcff9-9rm4s","build":"blue-v1","started_at":"2026-11-11T12:59:22Z"}
+
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"myapp-blue-58f57dcff9-9rm4s","build":"blue-v1","started_at":"2026-11-11T12:59:22Z"}
+
+=== Server Resource & Service Health Snapshot ===
+ 13:15:14 up  4:53,  4 users,  load average: 0.90, 0.80, 0.54
+               total        used        free      shared  buff/cache   available
+Mem:            3812        1757         358          13        1990        2054
+Swap:           2047           0        2047
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root        29G  9.5G   19G  34% /
+active
+active
+active
+inactive
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+

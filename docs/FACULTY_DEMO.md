@@ -1,10 +1,11 @@
 # VLE-8 Faculty Demonstration Guide, Checklist & Viva Q&A
 
 **Project:** VLE-8 — Blue-Green Deployment using DevOps Tools  
+**GitHub Repository:** `https://github.com/Ajay73588/vle8-blue-green-deployment`  
 **AWS Instance:** `i-07f04268b828911fc` (`c7i-flex.large`, `ap-south-1` Mumbai)  
 **EC2 Public IP:** `43.204.37.176`  
 **Application URL:** `http://43.204.37.176`  
-**Jenkins URL:** `http://43.204.37.176:8080`  
+**Jenkins Pipeline URL:** `http://43.204.37.176:8080/job/vle8-blue-green-pipeline/` *(login credentials saved locally in gitignored `.keys/jenkins_admin.txt`)*  
 **Kubernetes Namespace:** `vle8-app`
 
 ---

@@ -1,0 +1,283 @@
+﻿Started by GitHub push by Ajay73588
+Obtained jenkins/Jenkinsfile from git https://github.com/Ajay73588/vle8-blue-green-deployment.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/vle8-blue-green-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/vle8-blue-green-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Ajay73588/vle8-blue-green-deployment.git # timeout=10
+Fetching upstream changes from https://github.com/Ajay73588/vle8-blue-green-deployment.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/Ajay73588/vle8-blue-green-deployment.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision e1fa4fcb629f19b62cc8fd1b6eedcb834839d3f6 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e1fa4fcb629f19b62cc8fd1b6eedcb834839d3f6 # timeout=10
+Commit message: "Use unique mktemp logfile in verify-green-independent.sh"
+ > git rev-list --no-walk c38b5a196cd37b2b2659e410a052ea7d5e5b5a2d # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $DEPLOY_ENV
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (1. Checkout)
+[Pipeline] checkout
+[2026-11-11T13:11:49.848Z] Selected Git installation does not exist. Using Default
+[2026-11-11T13:11:49.849Z] The recommended git tool is: NONE
+[2026-11-11T13:11:49.849Z] No credentials specified
+[2026-11-11T13:11:49.850Z]  > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/vle8-blue-green-pipeline/.git # timeout=10
+[2026-11-11T13:11:49.860Z] Fetching changes from the remote Git repository
+[2026-11-11T13:11:49.861Z]  > git config remote.origin.url https://github.com/Ajay73588/vle8-blue-green-deployment.git # timeout=10
+[2026-11-11T13:11:49.868Z] Fetching upstream changes from https://github.com/Ajay73588/vle8-blue-green-deployment.git
+[2026-11-11T13:11:49.868Z]  > git --version # timeout=10
+[2026-11-11T13:11:49.874Z]  > git --version # 'git version 2.43.0'
+[2026-11-11T13:11:49.874Z]  > git fetch --tags --force --progress -- https://github.com/Ajay73588/vle8-blue-green-deployment.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+[2026-11-11T13:11:50.426Z]  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+[2026-11-11T13:11:50.430Z] Checking out Revision e1fa4fcb629f19b62cc8fd1b6eedcb834839d3f6 (refs/remotes/origin/main)
+[2026-11-11T13:11:50.430Z]  > git config core.sparsecheckout # timeout=10
+[2026-11-11T13:11:50.433Z]  > git checkout -f e1fa4fcb629f19b62cc8fd1b6eedcb834839d3f6 # timeout=10
+[2026-11-11T13:11:50.438Z] Commit message: "Use unique mktemp logfile in verify-green-independent.sh"
+[Pipeline] sh
+[2026-11-11T13:11:50.748Z] Checked out commit: e1fa4fc
+[2026-11-11T13:11:50.749Z] total 68
+[2026-11-11T13:11:50.749Z] drwxr-xr-x 12 jenkins jenkins 4096 Nov 11 13:05 .
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  4 jenkins jenkins 4096 Nov 11 13:05 ..
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  8 jenkins jenkins 4096 Nov 11 13:11 .git
+[2026-11-11T13:11:50.749Z] -rw-r--r--  1 jenkins jenkins  136 Nov 11 13:05 .gitattributes
+[2026-11-11T13:11:50.749Z] -rw-r--r--  1 jenkins jenkins  420 Nov 11 13:05 .gitignore
+[2026-11-11T13:11:50.749Z] -rw-r--r--  1 jenkins jenkins 8107 Nov 11 13:05 README.md
+[2026-11-11T13:11:50.749Z] -rw-r--r--  1 jenkins jenkins 2522 Nov 11 13:05 VLE8_PROGRESS.md
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:05 ansible
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:05 app
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:05 docker
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:05 docs
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:05 evidence
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:06 jenkins
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:05 kubernetes
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:11 scripts
+[2026-11-11T13:11:50.749Z] drwxr-xr-x  2 jenkins jenkins 4096 Nov 11 13:05 terraform
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (2. Validate Application & Configuration)
+[Pipeline] sh
+[2026-11-11T13:11:51.187Z] namespace/vle8-app configured (dry run)
+[2026-11-11T13:11:51.187Z] deployment.apps/myapp-blue configured (dry run)
+[2026-11-11T13:11:51.438Z] deployment.apps/myapp-green configured (dry run)
+[2026-11-11T13:11:51.438Z] service/myapp-service configured (dry run)
+[2026-11-11T13:11:51.438Z] Validation of Dockerfile, shell scripts, and Kubernetes manifests PASSED.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (3. Build Docker Image for Green / v2)
+[Pipeline] sh
+[2026-11-11T13:11:52.165Z] #0 building with "default" instance using docker driver
+[2026-11-11T13:11:52.165Z] 
+[2026-11-11T13:11:52.165Z] #1 [internal] load build definition from Dockerfile
+[2026-11-11T13:11:52.165Z] #1 transferring dockerfile: 786B done
+[2026-11-11T13:11:52.165Z] #1 DONE 0.0s
+[2026-11-11T13:11:52.165Z] 
+[2026-11-11T13:11:52.165Z] #2 [internal] load metadata for docker.io/library/nginx:1.27-alpine
+[2026-11-11T13:11:52.721Z] #2 DONE 0.9s
+[2026-11-11T13:11:52.972Z] 
+[2026-11-11T13:11:52.972Z] #3 [internal] load .dockerignore
+[2026-11-11T13:11:52.972Z] #3 transferring context: 2B done
+[2026-11-11T13:11:52.972Z] #3 DONE 0.0s
+[2026-11-11T13:11:52.972Z] 
+[2026-11-11T13:11:52.972Z] #4 [1/6] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+[2026-11-11T13:11:52.972Z] #4 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 0.0s done
+[2026-11-11T13:11:52.972Z] #4 CACHED
+[2026-11-11T13:11:52.973Z] 
+[2026-11-11T13:11:52.973Z] #5 [internal] load build context
+[2026-11-11T13:11:52.973Z] #5 transferring context: 162B done
+[2026-11-11T13:11:52.973Z] #5 DONE 0.0s
+[2026-11-11T13:11:52.973Z] 
+[2026-11-11T13:11:52.973Z] #6 [2/6] RUN mkdir -p /opt/vle8-templates
+[2026-11-11T13:11:52.973Z] #6 DONE 0.2s
+[2026-11-11T13:11:53.224Z] 
+[2026-11-11T13:11:53.224Z] #7 [3/6] COPY app/index.html.template /opt/vle8-templates/index.html.template
+[2026-11-11T13:11:53.224Z] #7 DONE 0.1s
+[2026-11-11T13:11:53.226Z] 
+[2026-11-11T13:11:53.226Z] #8 [4/6] COPY app/nginx.conf.template /opt/vle8-templates/nginx.conf.template
+[2026-11-11T13:11:53.226Z] #8 DONE 0.0s
+[2026-11-11T13:11:53.226Z] 
+[2026-11-11T13:11:53.226Z] #9 [5/6] COPY app/docker-entrypoint-render.sh /docker-entrypoint.d/40-vle8-render.sh
+[2026-11-11T13:11:53.479Z] #9 DONE 0.0s
+[2026-11-11T13:11:53.480Z] 
+[2026-11-11T13:11:53.480Z] #10 [6/6] RUN chmod +x /docker-entrypoint.d/40-vle8-render.sh
+[2026-11-11T13:11:53.480Z] #10 DONE 0.2s
+[2026-11-11T13:11:53.480Z] 
+[2026-11-11T13:11:53.480Z] #11 exporting to image
+[2026-11-11T13:11:53.480Z] #11 exporting layers
+[2026-11-11T13:11:53.731Z] #11 exporting layers 0.3s done
+[2026-11-11T13:11:53.982Z] #11 exporting manifest sha256:dd2038a0d35b24cdda7149af94bb711f8532939c588e89ac80192bc9066b1c40 0.0s done
+[2026-11-11T13:11:53.982Z] #11 exporting config sha256:8066029f11dc54844880e045ba940de00f4cdfcb906437d7e4891a332d7f60ff 0.0s done
+[2026-11-11T13:11:53.982Z] #11 exporting attestation manifest sha256:7e8b48cf910580f2d089a82cdccfd121ca61e27a4a0e635e48236076e3df966a 0.0s done
+[2026-11-11T13:11:53.982Z] #11 exporting manifest list sha256:b0ed8e1f2c580af8c74774716db619546a40da6755b3a864cb2a2be8db1eda2a 0.0s done
+[2026-11-11T13:11:53.982Z] #11 naming to docker.io/library/myapp:v2-b3 done
+[2026-11-11T13:11:53.982Z] #11 unpacking to docker.io/library/myapp:v2-b3 0.1s done
+[2026-11-11T13:11:53.982Z] #11 DONE 0.5s
+[2026-11-11T13:11:53.982Z] IMAGE         ID             DISK USAGE   CONTENT SIZE   EXTRA
+[2026-11-11T13:11:53.982Z] myapp:v1      feca107b3ac0       73.6MB           21MB        
+[2026-11-11T13:11:53.982Z] myapp:v2      f0c3e07b0c73       73.6MB           21MB        
+[2026-11-11T13:11:53.982Z] myapp:v2-b2   b75659da03dd       73.7MB           21MB        
+[2026-11-11T13:11:53.982Z] myapp:v2-b3   b0ed8e1f2c58       73.7MB           21MB        
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (4. Validate & Test Green Image)
+[Pipeline] sh
+[2026-11-11T13:11:54.395Z] 3679da77f44576b69dd342bda13bb209da5dcb5c094c012abb635a722f032a58
+[2026-11-11T13:11:55.740Z] Container smoke test /health: {"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"3679da77f445","build":"v2-b3","started_at":"2026-11-11T13:11:54Z"}
+[2026-11-11T13:11:55.740Z] Docker image smoke test PASSED.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (5. Deploy Green to Kubernetes)
+[Pipeline] sh
+[2026-11-11T13:11:56.147Z] Importing myapp:v2-b3 into Minikube containerd (k8s.io)...
+[2026-11-11T13:11:57.495Z] docker.io/library/myapp:v2 b3           	saved	
+[2026-11-11T13:11:57.495Z] application/vnd.oci.image.index.v1+json sha256:b0ed8e1f2c580af8c74774716db619546a40da6755b3a864cb2a2be8db1eda2a
+[2026-11-11T13:11:57.496Z] Importing	elapsed: 1.0 s	total:   0.0 B	(0.0 B/s)	
+[2026-11-11T13:11:57.496Z] namespace/vle8-app unchanged
+[2026-11-11T13:11:57.496Z] deployment.apps/myapp-green configured
+[2026-11-11T13:11:57.785Z] deployment.apps/myapp-green image updated
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (6. Wait for Green Rollout)
+[Pipeline] sh
+[2026-11-11T13:11:58.186Z] Waiting for deployment "myapp-green" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-11T13:11:59.531Z] Waiting for deployment "myapp-green" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-11T13:12:04.729Z] Waiting for deployment "myapp-green" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-11T13:12:04.729Z] Waiting for deployment "myapp-green" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-11T13:12:04.729Z] Waiting for deployment "myapp-green" rollout to finish: 1 old replicas are pending termination...
+[2026-11-11T13:12:04.729Z] Waiting for deployment "myapp-green" rollout to finish: 1 old replicas are pending termination...
+[2026-11-11T13:12:11.214Z] Waiting for deployment "myapp-green" rollout to finish: 1 old replicas are pending termination...
+[2026-11-11T13:12:11.214Z] deployment "myapp-green" successfully rolled out
+[2026-11-11T13:12:11.214Z] NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+[2026-11-11T13:12:11.214Z] myapp-blue    2/2     2            2           12m
+[2026-11-11T13:12:11.214Z] myapp-green   2/2     2            2           12m
+[2026-11-11T13:12:11.214Z] NAME                           READY   STATUS        RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+[2026-11-11T13:12:11.214Z] myapp-green-5b5cbd6954-jr572   1/1     Running       0          13s     10.244.0.9    minikube   <none>           <none>
+[2026-11-11T13:12:11.214Z] myapp-green-5b5cbd6954-jxth2   1/1     Running       0          6s      10.244.0.10   minikube   <none>           <none>
+[2026-11-11T13:12:11.214Z] myapp-green-5cc774979f-lk9zz   1/1     Terminating   0          5m32s   10.244.0.7    minikube   <none>           <none>
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (7. Verify Green Application Independently)
+[Pipeline] sh
+[2026-11-11T13:12:11.612Z] Confirming production service selector BEFORE switching:
+[2026-11-11T13:12:11.612Z] {"app":"myapp","color":"blue"}
+[2026-11-11T13:12:11.613Z] Testing Green deployment independently via kubectl port-forward (no production traffic change)...
+[2026-11-11T13:12:12.524Z] Independent Green /health response: {"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"myapp-green-5b5cbd6954-jr572","build":"v2-b3","started_at":"2026-11-11T13:11:58Z"}
+[2026-11-11T13:12:12.525Z] Independent Green verification PASSED without routing production traffic.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (8. Manual Approval)
+[Pipeline] timeout
+[2026-11-11T13:12:12.668Z] Timeout set to expire in 15 min
+[Pipeline] {
+[Pipeline] input
+[2026-11-11T13:12:12.737Z] Switch production traffic to GREEN?
+[2026-11-11T13:12:12.737Z] Switch to GREEN or Abort
+[2026-11-11T13:13:50.582Z] Approved by vle8admin
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (9. Switch Service Selector from Blue to Green)
+[Pipeline] sh
+[2026-11-11T13:13:51.209Z] Verifying GREEN deployment readiness before switching traffic...
+[2026-11-11T13:13:51.209Z] Switching myapp-service selector to color=green...
+[2026-11-11T13:13:51.209Z] service/myapp-service patched
+[2026-11-11T13:13:51.462Z] NAME            TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+[2026-11-11T13:13:51.462Z] myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   14m   app=myapp,color=green
+[2026-11-11T13:13:51.462Z] Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+[2026-11-11T13:13:51.462Z] NAME            ENDPOINTS                      AGE
+[2026-11-11T13:13:51.462Z] myapp-service   10.244.0.10:80,10.244.0.9:80   14m
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (10. Verify Production Traffic Returns GREEN / v2)
+[Pipeline] sh
+[2026-11-11T13:13:54.089Z] === Kubernetes Cluster & Workload Status ===
+[2026-11-11T13:13:54.089Z] NAME       STATUS   ROLES           AGE   VERSION
+[2026-11-11T13:13:54.089Z] minikube   Ready    control-plane   16m   v1.37.0
+[2026-11-11T13:13:54.089Z] NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+[2026-11-11T13:13:54.089Z] myapp-blue    2/2     2            2           14m
+[2026-11-11T13:13:54.089Z] myapp-green   2/2     2            2           14m
+[2026-11-11T13:13:54.089Z] NAME                           READY   STATUS    RESTARTS   AGE    IP            NODE       NOMINATED NODE   READINESS GATES
+[2026-11-11T13:13:54.089Z] myapp-blue-58f57dcff9-9rm4s    1/1     Running   0          14m    10.244.0.3    minikube   <none>           <none>
+[2026-11-11T13:13:54.089Z] myapp-blue-58f57dcff9-r74qm    1/1     Running   0          14m    10.244.0.4    minikube   <none>           <none>
+[2026-11-11T13:13:54.089Z] myapp-green-5b5cbd6954-jr572   1/1     Running   0          116s   10.244.0.9    minikube   <none>           <none>
+[2026-11-11T13:13:54.089Z] myapp-green-5b5cbd6954-jxth2   1/1     Running   0          109s   10.244.0.10   minikube   <none>           <none>
+[2026-11-11T13:13:54.089Z] NAME            TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+[2026-11-11T13:13:54.089Z] myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   14m
+[2026-11-11T13:13:54.089Z] Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+[2026-11-11T13:13:54.089Z] NAME            ENDPOINTS                      AGE
+[2026-11-11T13:13:54.089Z] myapp-service   10.244.0.10:80,10.244.0.9:80   14m
+[2026-11-11T13:13:54.089Z] === Service Selector ===
+[2026-11-11T13:13:54.089Z] {"app":"myapp","color":"green"}
+[2026-11-11T13:13:54.089Z] === Live HTTP Health & Info (http://127.0.0.1) ===
+[2026-11-11T13:13:54.089Z] Health: {"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"myapp-green-5b5cbd6954-jr572","build":"v2-b3","started_at":"2026-11-11T13:11:58Z"}
+[2026-11-11T13:13:54.090Z] Info:   {"app":"VLE-8 Blue-Green Deployment","color":"GREEN","selector":{"app":"myapp","color":"green"},"version":"v2","pod":"myapp-green-5b5cbd6954-jxth2","build":"v2-b3","started_at":"2026-11-11T13:12:04Z","release_note":"Green environment (v2) is active. This release introduces the updated Green theme and verified rollout candidate."}
+[2026-11-11T13:13:54.090Z] Verification PASSED.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (11. Report Deployment Status)
+[Pipeline] sh
+[2026-11-11T13:13:54.471Z] === Final VLE-8 Blue-Green Deployment Status ===
+[2026-11-11T13:13:54.471Z] Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+[2026-11-11T13:13:54.471Z] NAME                          READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES        SELECTOR
+[2026-11-11T13:13:54.471Z] deployment.apps/myapp-blue    2/2     2            2           14m   myapp        myapp:v1      app=myapp,color=blue
+[2026-11-11T13:13:54.471Z] deployment.apps/myapp-green   2/2     2            2           14m   myapp        myapp:v2-b3   app=myapp,color=green
+[2026-11-11T13:13:54.471Z] 
+[2026-11-11T13:13:54.471Z] NAME                               READY   STATUS    RESTARTS   AGE    IP            NODE       NOMINATED NODE   READINESS GATES
+[2026-11-11T13:13:54.471Z] pod/myapp-blue-58f57dcff9-9rm4s    1/1     Running   0          14m    10.244.0.3    minikube   <none>           <none>
+[2026-11-11T13:13:54.471Z] pod/myapp-blue-58f57dcff9-r74qm    1/1     Running   0          14m    10.244.0.4    minikube   <none>           <none>
+[2026-11-11T13:13:54.471Z] pod/myapp-green-5b5cbd6954-jr572   1/1     Running   0          117s   10.244.0.9    minikube   <none>           <none>
+[2026-11-11T13:13:54.471Z] pod/myapp-green-5b5cbd6954-jxth2   1/1     Running   0          110s   10.244.0.10   minikube   <none>           <none>
+[2026-11-11T13:13:54.471Z] 
+[2026-11-11T13:13:54.471Z] NAME                    TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+[2026-11-11T13:13:54.471Z] service/myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   14m   app=myapp,color=green
+[2026-11-11T13:13:54.471Z] 
+[2026-11-11T13:13:54.471Z] NAME                      ENDPOINTS                      AGE
+[2026-11-11T13:13:54.471Z] endpoints/myapp-service   10.244.0.10:80,10.244.0.9:80   14m
+[2026-11-11T13:13:54.471Z] Active production URL response:
+[2026-11-11T13:13:54.471Z] {"app":"VLE-8 Blue-Green Deployment","color":"GREEN","selector":{"app":"myapp","color":"green"},"version":"v2","pod":"myapp-green-5b5cbd6954-jxth2","build":"v2-b3","started_at":"2026-11-11T13:12:04Z","release_note":"Green environment (v2) is active. This release introduces the updated Green theme and verified rollout candidate."}
+[2026-11-11T13:13:54.471Z] 
+[2026-11-11T13:13:54.471Z] To rollback to BLUE immediately, run: bash scripts/switch-to-blue.sh
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+

@@ -170,13 +170,22 @@ bash scripts/switch-to-blue.sh
 
 ---
 
-## 11. Documentation, Evidence & Acceptance Tests
+## 11. Verified Live Deployment, Documentation & Evidence
 
+- **GitHub Repository:** `https://github.com/Ajay73588/vle8-blue-green-deployment`
+- **EC2 Instance (`ap-south-1`):** `i-07f04268b828911fc` (`c7i-flex.large`, Public IP `43.204.37.176`)
+- **Live Application URL:** `http://43.204.37.176` *(left active on **BLUE / v1** for faculty demo)*
+- **Jenkins Pipeline UI:** `http://43.204.37.176:8080/job/vle8-blue-green-pipeline/`
+
+### Documentation
 - Architecture & Cost Analysis: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- Detailed Implementation & Test Results: [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md)
+- Full Implementation Report & Test Matrix (13/13 PASS): [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md)
 - Faculty Demo Script & Viva Q&A: [docs/FACULTY_DEMO.md](docs/FACULTY_DEMO.md)
 - Progress Tracker: [VLE8_PROGRESS.md](VLE8_PROGRESS.md)
-- Captured Evidence & Screenshots: `evidence/`
+
+### Evidence Artifacts (`evidence/`)
+- **Logs:** [Phase 3 Terraform](evidence/phase3_terraform_outputs.txt), [Phase 4 Ansible](evidence/phase4_ansible_verification.txt), [Phase 5 Docker](evidence/phase5_docker_build_and_test.txt), [Phase 6 Kubernetes](evidence/phase6_kubernetes_verification.txt), [Phase 7 Jenkins Build #3](evidence/phase7_jenkins_build3_console.txt), [Phase 8 GitHub Webhook](evidence/phase8_github_webhook.txt), [Phase 9 Pre-Switch](evidence/phase9_pre_switch_verification.txt), [Phase 9 Green Switch](evidence/phase9_green_switch_verification.txt), [Phase 9 Rollback & Health](evidence/phase9_rollback_and_health.txt)
+- **Screenshots:** [Initial BLUE v1](evidence/screenshot_blue_initial.png), [Jenkins Stage View Paused](evidence/screenshot_jenkins_stage_view_paused.png), [Jenkins Manual Approval](evidence/screenshot_jenkins_manual_approval.png), [Switched GREEN v2](evidence/screenshot_green_live.png), [Jenkins Build #3 Success](evidence/screenshot_jenkins_pipeline_success.png), [Rollback BLUE v1](evidence/screenshot_blue_rollback.png)
 
 ---
 
