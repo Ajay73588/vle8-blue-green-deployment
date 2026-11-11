@@ -1,0 +1,30 @@
+# Private keys and secrets
+.keys/
+*.pem
+*.key
+*.ppk
+.env
+.env.*
+secrets/
+
+# Terraform state and local variables
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/tfplan*
+terraform/terraform.tfvars
+terraform/crash.log
+
+# Ansible retry / sensitive local artifacts
+*.retry
+ansible/.vault_pass
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+

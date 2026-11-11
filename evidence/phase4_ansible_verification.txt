@@ -1,0 +1,177 @@
+
+PLAY [Configure Ubuntu EC2 Host for VLE-8 Blue-Green Deployment] ***************
+
+TASK [Gathering Facts] *********************************************************
+ok: [vle8-host]
+
+TASK [Create 2 GiB swapfile for memory headroom during Docker builds + Minikube] ***
+ok: [vle8-host]
+
+TASK [Set swapfile permissions to 0600] ****************************************
+ok: [vle8-host]
+
+TASK [Format swapfile if not already formatted] ********************************
+ok: [vle8-host]
+
+TASK [Enable swapfile in fstab and activate swap] ******************************
+[WARNING]: Deprecation warnings can be disabled by setting `deprecation_warnings=False` in ansible.cfg.
+[DEPRECATION WARNING]: Importing 'to_bytes' from 'ansible.module_utils._text' is deprecated. This feature will be removed from ansible-core version 2.24. Use ansible.module_utils.common.text.converters instead.
+[DEPRECATION WARNING]: Importing 'to_native' from 'ansible.module_utils._text' is deprecated. This feature will be removed from ansible-core version 2.24. Use ansible.module_utils.common.text.converters instead.
+[DEPRECATION WARNING]: Passing `warnings` to `exit_json` or `fail_json` is deprecated. This feature will be removed from ansible-core version 2.23. Use `AnsibleModule.warn` instead.
+ok: [vle8-host]
+
+TASK [Activate swap if not active] *********************************************
+ok: [vle8-host]
+
+TASK [Tune vm.swappiness to 10] ************************************************
+ok: [vle8-host]
+
+TASK [Wait for apt lock and update apt cache] **********************************
+changed: [vle8-host]
+
+TASK [Install required base utilities and Nginx] *******************************
+ok: [vle8-host]
+
+TASK [Ensure /etc/apt/keyrings exists] *****************************************
+ok: [vle8-host]
+
+TASK [Download Docker GPG key] *************************************************
+ok: [vle8-host]
+
+TASK [Add Docker APT repository] ***********************************************
+ok: [vle8-host]
+
+TASK [Install Docker CE and Buildx] ********************************************
+ok: [vle8-host]
+
+TASK [Ensure Docker service is enabled and running] ****************************
+ok: [vle8-host]
+
+TASK [Add ubuntu user to docker group] *****************************************
+ok: [vle8-host]
+
+TASK [Download Jenkins GPG key] ************************************************
+ok: [vle8-host]
+
+TASK [Fallback to Jenkins 2023 GPG key if 2026 key URL unavailable] ************
+skipping: [vle8-host]
+
+TASK [Add Jenkins APT repository] **********************************************
+ok: [vle8-host]
+
+TASK [Install Jenkins LTS] *****************************************************
+ok: [vle8-host]
+
+TASK [Add jenkins user to docker group] ****************************************
+ok: [vle8-host]
+
+TASK [Create Jenkins systemd override directory] *******************************
+ok: [vle8-host]
+
+TASK [Configure Jenkins JVM memory limits in systemd override] *****************
+ok: [vle8-host]
+
+TASK [Reload systemd and restart Jenkins if unit or group changed] *************
+ok: [vle8-host]
+
+TASK [Download Kubernetes APT keyring] *****************************************
+changed: [vle8-host]
+
+TASK [Add Kubernetes APT repository] *******************************************
+changed: [vle8-host]
+
+TASK [Install kubectl] *********************************************************
+changed: [vle8-host]
+
+TASK [Check if minikube is already installed] **********************************
+ok: [vle8-host]
+
+TASK [Download Minikube amd64 deb package] *************************************
+changed: [vle8-host]
+
+TASK [Install Minikube package] ************************************************
+changed: [vle8-host]
+
+TASK [Check Minikube status as ubuntu user] ************************************
+ok: [vle8-host]
+
+TASK [Start Minikube cluster with Docker driver] *******************************
+changed: [vle8-host]
+
+TASK [Ensure default kubectl namespace is set for ubuntu] **********************
+ok: [vle8-host]
+
+TASK [Generate flattened kubeconfig for Jenkins user] **************************
+ok: [vle8-host]
+
+TASK [Ensure /var/lib/jenkins/.kube directory exists] **************************
+changed: [vle8-host]
+
+TASK [Copy flattened kubeconfig to Jenkins home] *******************************
+changed: [vle8-host]
+
+TASK [Remove temporary kubeconfig file] ****************************************
+changed: [vle8-host]
+
+TASK [Get Minikube IP address] *************************************************
+ok: [vle8-host]
+
+TASK [Configure Nginx reverse proxy for VLE-8 Blue-Green Service] **************
+changed: [vle8-host]
+
+TASK [Remove default Nginx site symlink] ***************************************
+changed: [vle8-host]
+
+TASK [Enable VLE-8 Nginx site symlink] *****************************************
+changed: [vle8-host]
+
+TASK [Test Nginx configuration] ************************************************
+ok: [vle8-host]
+
+TASK [Enable and reload Nginx service] *****************************************
+changed: [vle8-host]
+
+TASK [Install resume helper script for Minikube + Nginx after EC2 stop/start] ***
+changed: [vle8-host]
+
+TASK [Install systemd service to ensure Minikube resumes on EC2 boot] **********
+changed: [vle8-host]
+
+TASK [Enable vle8-minikube-resume systemd service] *****************************
+changed: [vle8-host]
+
+TASK [Verify Java, Jenkins, Docker, kubectl, Minikube, and Jenkins kubeconfig] ***
+ok: [vle8-host]
+
+TASK [Print verification summary] **********************************************
+ok: [vle8-host] => {
+    "verify_out.stdout_lines": [
+        "=== Java ===",
+        "openjdk version \"21.0.13.0.3\" 2026-10-24",
+        "OpenJDK Runtime Environment (build 21.0.13.0.3+1-1-24.04.1-Ubuntu)",
+        "=== Jenkins ===",
+        "2.580.2",
+        "active",
+        "=== Docker ===",
+        "Docker version 29.9.3, build 5457199",
+        "Jenkins Docker access: OK",
+        "=== kubectl ===",
+        "Client Version: v1.32.13",
+        "Kustomize Version: v5.5.0",
+        "=== Minikube ===",
+        "minikube",
+        "type: Control Plane",
+        "host: Running",
+        "kubelet: Running",
+        "apiserver: Running",
+        "kubeconfig: Configured",
+        "",
+        "=== Jenkins kubectl access ===",
+        "NAME       STATUS   ROLES           AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION           CONTAINER-RUNTIME",
+        "minikube   Ready    control-plane   27s   v1.37.0   192.168.49.2   <none>        Debian GNU/Linux 12 (bookworm)   7.0.0-1014-aws (amd64)   containerd://2.3.4"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+vle8-host                  : ok=46   changed=17   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+

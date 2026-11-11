@@ -1,0 +1,408 @@
+---
+- name: Configure Ubuntu EC2 Host for VLE-8 Blue-Green Deployment
+  hosts: jenkins_server
+  become: yes
+  vars:
+    kube_namespace: vle8-app
+    minikube_cpus: "2"
+    minikube_memory: "1900mb"
+    minikube_disk_size: "15g"
+    jenkins_heap_min: "256m"
+    jenkins_heap_max: "768m"
+    k8s_apt_minor: "v1.32"
+    app_nodeport: 30080
+
+  tasks:
+    - name: Create 2 GiB swapfile for memory headroom during Docker builds + Minikube
+      ansible.builtin.command: fallocate -l 2G /swapfile
+      args:
+        creates: /swapfile
+
+    - name: Set swapfile permissions to 0600
+      ansible.builtin.file:
+        path: /swapfile
+        mode: "0600"
+        owner: root
+        group: root
+
+    - name: Format swapfile if not already formatted
+      ansible.builtin.shell: |
+        if ! file -s /swapfile | grep -q "swap file"; then
+          mkswap /swapfile
+        fi
+      args:
+        executable: /bin/bash
+      register: mkswap_res
+      changed_when: "'Setting up swapspace' in mkswap_res.stdout"
+
+    - name: Enable swapfile in fstab and activate swap
+      ansible.posix.mount:
+        name: none
+        src: /swapfile
+        fstype: swap
+        opts: sw
+        passno: "0"
+        dump: "0"
+        state: present
+
+    - name: Activate swap if not active
+      ansible.builtin.shell: |
+        if ! swapon --show | grep -q "/swapfile"; then
+          swapon /swapfile
+        fi
+      args:
+        executable: /bin/bash
+      register: swapon_res
+      changed_when: false
+
+    - name: Tune vm.swappiness to 10
+      ansible.posix.sysctl:
+        name: vm.swappiness
+        value: "10"
+        state: present
+        reload: yes
+
+    - name: Wait for apt lock and update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+        lock_timeout: 300
+
+    - name: Install required base utilities and Nginx
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - git
+          - jq
+          - nginx
+          - conntrack
+          - socat
+          - unzip
+          - fontconfig
+          - openjdk-21-jre-headless
+        state: present
+        lock_timeout: 300
+
+    - name: Ensure /etc/apt/keyrings exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    # ---------------- Docker CE ----------------
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Add Docker APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
+        filename: docker
+        state: present
+
+    - name: Install Docker CE and Buildx
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+        state: present
+        update_cache: yes
+        lock_timeout: 300
+
+    - name: Ensure Docker service is enabled and running
+      ansible.builtin.systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Add ubuntu user to docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    # ---------------- Jenkins LTS ----------------
+    - name: Download Jenkins GPG key
+      ansible.builtin.get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+        dest: /etc/apt/keyrings/jenkins-keyring.asc
+        mode: "0644"
+      register: jenkins_key_2026
+      ignore_errors: yes
+
+    - name: Fallback to Jenkins 2023 GPG key if 2026 key URL unavailable
+      ansible.builtin.get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+        dest: /etc/apt/keyrings/jenkins-keyring.asc
+        mode: "0644"
+      when: jenkins_key_2026 is failed
+
+    - name: Add Jenkins APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/"
+        filename: jenkins
+        state: present
+
+    - name: Install Jenkins LTS
+      ansible.builtin.apt:
+        name: jenkins
+        state: present
+        update_cache: yes
+        lock_timeout: 300
+
+    - name: Add jenkins user to docker group
+      ansible.builtin.user:
+        name: jenkins
+        groups: docker
+        append: yes
+      register: jenkins_group_change
+
+    - name: Create Jenkins systemd override directory
+      ansible.builtin.file:
+        path: /etc/systemd/system/jenkins.service.d
+        state: directory
+        mode: "0755"
+
+    - name: Configure Jenkins JVM memory limits in systemd override
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/jenkins.service.d/override.conf
+        mode: "0644"
+        content: |
+          [Service]
+          Environment="JAVA_OPTS=-Djava.awt.headless=true -Xms{{ jenkins_heap_min }} -Xmx{{ jenkins_heap_max }}"
+      register: jenkins_override
+
+    - name: Reload systemd and restart Jenkins if unit or group changed
+      ansible.builtin.systemd:
+        name: jenkins
+        daemon_reload: yes
+        enabled: yes
+        state: "{{ 'restarted' if (jenkins_group_change.changed or jenkins_override.changed) else 'started' }}"
+
+    # ---------------- kubectl ----------------
+    - name: Download Kubernetes APT keyring
+      ansible.builtin.shell: |
+        set -euo pipefail
+        if [ ! -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg ]; then
+          curl -fsSL "https://pkgs.k8s.io/core:/stable:/{{ k8s_apt_minor }}/deb/Release.key" | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+          chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+        fi
+      args:
+        executable: /bin/bash
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add Kubernetes APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ k8s_apt_minor }}/deb/ /"
+        filename: kubernetes
+        state: present
+
+    - name: Install kubectl
+      ansible.builtin.apt:
+        name: kubectl
+        state: present
+        update_cache: yes
+        lock_timeout: 300
+
+    # ---------------- Minikube ----------------
+    - name: Check if minikube is already installed
+      ansible.builtin.command: which minikube
+      register: minikube_bin
+      failed_when: false
+      changed_when: false
+
+    - name: Download Minikube amd64 deb package
+      ansible.builtin.get_url:
+        url: https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+        dest: /tmp/minikube_latest_amd64.deb
+        mode: "0644"
+      when: minikube_bin.rc != 0
+
+    - name: Install Minikube package
+      ansible.builtin.apt:
+        deb: /tmp/minikube_latest_amd64.deb
+        lock_timeout: 300
+      when: minikube_bin.rc != 0
+
+    - name: Check Minikube status as ubuntu user
+      become_user: ubuntu
+      become_flags: "-H"
+      ansible.builtin.shell: 'minikube status 2>/dev/null | grep -q "apiserver: Running"'
+      register: minikube_host_status
+      failed_when: false
+      changed_when: false
+
+    - name: Start Minikube cluster with Docker driver
+      become_user: ubuntu
+      become_flags: "-H"
+      ansible.builtin.command: >
+        minikube start
+        --driver=docker
+        --cpus={{ minikube_cpus }}
+        --memory={{ minikube_memory }}
+        --disk-size={{ minikube_disk_size }}
+      when: minikube_host_status.rc != 0
+
+    - name: Ensure default kubectl namespace is set for ubuntu
+      become_user: ubuntu
+      become_flags: "-H"
+      ansible.builtin.command: kubectl config set-context --current --namespace={{ kube_namespace }}
+      changed_when: false
+
+    - name: Generate flattened kubeconfig for Jenkins user
+      become_user: ubuntu
+      become_flags: "-H"
+      ansible.builtin.shell: kubectl config view --raw --flatten > /tmp/jenkins-kubeconfig
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Ensure /var/lib/jenkins/.kube directory exists
+      ansible.builtin.file:
+        path: /var/lib/jenkins/.kube
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: "0700"
+
+    - name: Copy flattened kubeconfig to Jenkins home
+      ansible.builtin.copy:
+        src: /tmp/jenkins-kubeconfig
+        dest: /var/lib/jenkins/.kube/config
+        remote_src: yes
+        owner: jenkins
+        group: jenkins
+        mode: "0600"
+
+    - name: Remove temporary kubeconfig file
+      ansible.builtin.file:
+        path: /tmp/jenkins-kubeconfig
+        state: absent
+
+    - name: Get Minikube IP address
+      become_user: ubuntu
+      become_flags: "-H"
+      ansible.builtin.command: minikube ip
+      register: minikube_ip
+      changed_when: false
+
+    # ---------------- Nginx Reverse Proxy (:80 -> Minikube :30080) ----------------
+    - name: Configure Nginx reverse proxy for VLE-8 Blue-Green Service
+      ansible.builtin.copy:
+        dest: /etc/nginx/sites-available/vle8-blue-green
+        mode: "0644"
+        content: |
+          server {
+              listen 80 default_server;
+              listen [::]:80 default_server;
+              server_name _;
+
+              location / {
+                  proxy_pass http://{{ minikube_ip.stdout }}:{{ app_nodeport }};
+                  proxy_http_version 1.1;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                  proxy_set_header Connection "";
+                  proxy_buffering off;
+                  proxy_read_timeout 30s;
+              }
+          }
+      register: nginx_conf
+
+    - name: Remove default Nginx site symlink
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      register: nginx_default_rm
+
+    - name: Enable VLE-8 Nginx site symlink
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/vle8-blue-green
+        dest: /etc/nginx/sites-enabled/vle8-blue-green
+        state: link
+      register: nginx_site_link
+
+    - name: Test Nginx configuration
+      ansible.builtin.command: nginx -t
+      changed_when: false
+
+    - name: Enable and reload Nginx service
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: yes
+        state: "{{ 'reloaded' if (nginx_conf.changed or nginx_default_rm.changed or nginx_site_link.changed) else 'started' }}"
+
+    # ---------------- Boot / Resume Helper ----------------
+    - name: Install resume helper script for Minikube + Nginx after EC2 stop/start
+      ansible.builtin.copy:
+        dest: /usr/local/bin/vle8-resume.sh
+        mode: "0755"
+        content: |
+          #!/bin/bash
+          set -euo pipefail
+          su - ubuntu -c "minikube start --driver=docker --cpus={{ minikube_cpus }} --memory={{ minikube_memory }} --disk-size={{ minikube_disk_size }}"
+          MK_IP=$(su - ubuntu -c "minikube ip")
+          sed -i -E "s|proxy_pass http://[0-9.]+:{{ app_nodeport }};|proxy_pass http://${MK_IP}:{{ app_nodeport }};|" /etc/nginx/sites-available/vle8-blue-green
+          nginx -t
+          systemctl reload nginx
+
+    - name: Install systemd service to ensure Minikube resumes on EC2 boot
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/vle8-minikube-resume.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Ensure Minikube and Nginx proxy resume after EC2 start
+          After=docker.service network-online.target
+          Requires=docker.service
+
+          [Service]
+          Type=oneshot
+          ExecStart=/usr/local/bin/vle8-resume.sh
+          RemainAfterExit=yes
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Enable vle8-minikube-resume systemd service
+      ansible.builtin.systemd:
+        name: vle8-minikube-resume.service
+        daemon_reload: yes
+        enabled: yes
+
+    # ---------------- Verification Commands ----------------
+    - name: Verify Java, Jenkins, Docker, kubectl, Minikube, and Jenkins kubeconfig
+      ansible.builtin.shell: |
+        set -euo pipefail
+        echo "=== Java ==="
+        java -version 2>&1 | head -n 2
+        echo "=== Jenkins ==="
+        jenkins --version
+        systemctl is-active jenkins
+        echo "=== Docker ==="
+        docker --version
+        sudo -u jenkins docker ps >/dev/null && echo "Jenkins Docker access: OK"
+        echo "=== kubectl ==="
+        kubectl version --client
+        echo "=== Minikube ==="
+        sudo -u ubuntu minikube status
+        echo "=== Jenkins kubectl access ==="
+        sudo -u jenkins kubectl get nodes -o wide
+      args:
+        executable: /bin/bash
+      register: verify_out
+      changed_when: false
+
+    - name: Print verification summary
+      ansible.builtin.debug:
+        var: verify_out.stdout_lines

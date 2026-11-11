@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars and adjust CIDRs to your current public IP (/32).
+# Check current public IP: curl.exe -s https://checkip.amazonaws.com
+
+aws_region                    = "ap-south-1"
+availability_zone             = "ap-south-1a"
+instance_type                 = "c7i-flex.large"
+root_volume_size              = 30
+ssh_public_key_path           = "../.keys/vle8-ed25519.pub"
+allowed_admin_cidrs           = ["YOUR_PUBLIC_IP/32"]
+allowed_app_cidrs             = ["YOUR_PUBLIC_IP/32"]
+enable_github_webhook_ingress = true
+allow_ssh_ingress             = false
+

@@ -1,0 +1,167 @@
+Warning: Permanently added 'i-07f04268b828911fc' (ED25519) to the list of known hosts.
+=== Files in ~/vle8-repo ===
+total 28
+drwxrwxr-x 7 ubuntu ubuntu 4096 Nov 11 12:58 .
+drwxr-x--- 8 ubuntu ubuntu 4096 Nov 11 12:58 ..
+drwxrwxr-x 2 ubuntu ubuntu 4096 Nov 11 08:08 app
+drwxrwxr-x 2 ubuntu ubuntu 4096 Nov 11 08:06 docker
+drwxrwxr-x 2 ubuntu ubuntu 4096 Nov 11 08:08 jenkins
+drwxrwxr-x 2 ubuntu ubuntu 4096 Nov 11 08:08 kubernetes
+drwxrwxr-x 2 ubuntu ubuntu 4096 Nov 11 08:08 scripts
+=== Building myapp:v1 (BLUE) ===
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 786B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/nginx:1.27-alpine
+#2 DONE 1.9s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/6] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#4 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 0.0s done
+#4 DONE 0.2s
+
+#5 [internal] load build context
+#5 transferring context: 9.90kB done
+#5 DONE 0.1s
+
+#4 [1/6] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#4 sha256:39c2ddfd6010082a4a646e7ca44e95aca9bf3eaebc00f17f7ccc2954004f2a7d 0B / 15.52MB 0.2s
+#4 sha256:39c2ddfd6010082a4a646e7ca44e95aca9bf3eaebc00f17f7ccc2954004f2a7d 15.52MB / 15.52MB 0.3s done
+#4 sha256:34a64644b756511a2e217f0508e11d1a572085d66cd6dc9a555a082ad49a3102 0B / 1.40kB 0.2s
+#4 sha256:197eb75867ef4fcecd4724f17b0972ab0489436860a594a9445f8eaff8155053 0B / 1.21kB 0.2s
+#4 sha256:81bd8ed7ec6789b0cb7f1b47ee731c522f6dba83201ec73cd6bca1350f582948 0B / 402B 0.2s
+#4 sha256:34a64644b756511a2e217f0508e11d1a572085d66cd6dc9a555a082ad49a3102 1.40kB / 1.40kB 0.4s done
+#4 sha256:d7e5070240863957ebb0b5a44a5729963c3462666baa2947d00628cb5f2d5773 0B / 955B 0.2s
+#4 sha256:b464cfdf2a6319875aeb27359ec549790ce14d8214fcb16ef915e4530e5ed235 0B / 629B 0.2s
+#4 sha256:197eb75867ef4fcecd4724f17b0972ab0489436860a594a9445f8eaff8155053 1.21kB / 1.21kB 0.6s done
+#4 sha256:81bd8ed7ec6789b0cb7f1b47ee731c522f6dba83201ec73cd6bca1350f582948 402B / 402B 0.6s done
+#4 sha256:d7e5070240863957ebb0b5a44a5729963c3462666baa2947d00628cb5f2d5773 955B / 955B 0.3s done
+#4 sha256:b464cfdf2a6319875aeb27359ec549790ce14d8214fcb16ef915e4530e5ed235 629B / 629B 0.2s done
+#4 sha256:61ca4f733c802afd9e05a32f0de0361b6d713b8b53292dc15fb093229f648674 0B / 1.79MB 0.2s
+#4 sha256:61ca4f733c802afd9e05a32f0de0361b6d713b8b53292dc15fb093229f648674 1.79MB / 1.79MB 0.2s done
+#4 sha256:f18232174bc91741fdf3da96d85011092101a032a93a388b79e99e69c2d5c870 3.64MB / 3.64MB 0.2s done
+#4 extracting sha256:f18232174bc91741fdf3da96d85011092101a032a93a388b79e99e69c2d5c870 0.1s done
+#4 DONE 1.2s
+
+#4 [1/6] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#4 extracting sha256:61ca4f733c802afd9e05a32f0de0361b6d713b8b53292dc15fb093229f648674 0.1s done
+#4 extracting sha256:b464cfdf2a6319875aeb27359ec549790ce14d8214fcb16ef915e4530e5ed235 0.0s done
+#4 extracting sha256:d7e5070240863957ebb0b5a44a5729963c3462666baa2947d00628cb5f2d5773 0.0s done
+#4 DONE 1.3s
+
+#4 [1/6] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#4 extracting sha256:81bd8ed7ec6789b0cb7f1b47ee731c522f6dba83201ec73cd6bca1350f582948 0.0s done
+#4 extracting sha256:197eb75867ef4fcecd4724f17b0972ab0489436860a594a9445f8eaff8155053 0.0s done
+#4 extracting sha256:34a64644b756511a2e217f0508e11d1a572085d66cd6dc9a555a082ad49a3102 0.0s done
+#4 extracting sha256:39c2ddfd6010082a4a646e7ca44e95aca9bf3eaebc00f17f7ccc2954004f2a7d
+#4 extracting sha256:39c2ddfd6010082a4a646e7ca44e95aca9bf3eaebc00f17f7ccc2954004f2a7d 0.3s done
+#4 DONE 1.6s
+
+#6 [2/6] RUN mkdir -p /opt/vle8-templates
+#6 DONE 0.5s
+
+#7 [3/6] COPY app/index.html.template /opt/vle8-templates/index.html.template
+#7 DONE 0.0s
+
+#8 [4/6] COPY app/nginx.conf.template /opt/vle8-templates/nginx.conf.template
+#8 DONE 0.1s
+
+#9 [5/6] COPY app/docker-entrypoint-render.sh /docker-entrypoint.d/40-vle8-render.sh
+#9 DONE 0.0s
+
+#10 [6/6] RUN chmod +x /docker-entrypoint.d/40-vle8-render.sh
+#10 DONE 0.2s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 0.3s done
+#11 exporting manifest sha256:5a3b126c5f43e37712785057be2106886aea335476026822ce3e974fb8f62f90 0.0s done
+#11 exporting config sha256:5ccedd5a0cfcd35586c954f5b045f1677fcf33423dda028630503ee7773c5227 0.0s done
+#11 exporting attestation manifest sha256:d65611412ff9e3155c7be3f13f1b4d1861aa1e416b9a7dd6594e9c64bd3f34c6 0.0s done
+#11 exporting manifest list sha256:feca107b3ac088d7ee35e6381c6dd31ad302dce60cd7965e12be0e7b497fea51 0.0s done
+#11 naming to docker.io/library/myapp:v1 done
+#11 unpacking to docker.io/library/myapp:v1
+#11 unpacking to docker.io/library/myapp:v1 0.6s done
+#11 DONE 1.0s
+=== Building myapp:v2 (GREEN) ===
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 786B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/nginx:1.27-alpine
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/6] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#4 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 0.0s done
+#4 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 162B done
+#5 DONE 0.0s
+
+#6 [2/6] RUN mkdir -p /opt/vle8-templates
+#6 DONE 0.2s
+
+#7 [3/6] COPY app/index.html.template /opt/vle8-templates/index.html.template
+#7 DONE 0.0s
+
+#8 [4/6] COPY app/nginx.conf.template /opt/vle8-templates/nginx.conf.template
+#8 DONE 0.0s
+
+#9 [5/6] COPY app/docker-entrypoint-render.sh /docker-entrypoint.d/40-vle8-render.sh
+#9 DONE 0.0s
+
+#10 [6/6] RUN chmod +x /docker-entrypoint.d/40-vle8-render.sh
+#10 DONE 0.1s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 0.2s done
+#11 exporting manifest sha256:bbeffe7a84f9dc4260dd40d1f3b011e07f5b1958043704bde4a47d88ba5a52e6
+#11 exporting manifest sha256:bbeffe7a84f9dc4260dd40d1f3b011e07f5b1958043704bde4a47d88ba5a52e6 0.0s done
+#11 exporting config sha256:ef7e516e97529c3bb1aaaa5fd2444d0b1c36426d3979568db9c0ed7b96868482 0.0s done
+#11 exporting attestation manifest sha256:b42292a422c4880bc8fd8e4c397b667bb6180121ed89e632a9d48356a5279edd 0.0s done
+#11 exporting manifest list sha256:f0c3e07b0c7328ada28e6aa147035f1a46f7ff78db362ff5a93af4e0fadd9fc9 0.0s done
+#11 naming to docker.io/library/myapp:v2 done
+#11 unpacking to docker.io/library/myapp:v2 0.1s done
+#11 DONE 0.4s
+=== Docker Images ===
+IMAGE      ID             DISK USAGE   CONTENT SIZE   EXTRA
+myapp:v1   feca107b3ac0       73.6MB           21MB        
+myapp:v2   f0c3e07b0c73       73.6MB           21MB        
+=== Smoke-testing myapp:v1 (BLUE) container ===
+6ceab48f2a1264dc8b809a0f88a2345ace5e16059e91145e509a23ffd7bfaef4
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"6ceab48f2a12","build":"blue-v1","started_at":"2026-11-11T12:58:41Z"}
+
+{"app":"VLE-8 Blue-Green Deployment","color":"BLUE","selector":{"app":"myapp","color":"blue"},"version":"v1","pod":"6ceab48f2a12","build":"blue-v1","started_at":"2026-11-11T12:58:41Z","release_note":"Blue environment (v1) is serving stable baseline traffic routed by Kubernetes Service myapp-service."}
+
+BLUE
+v1
+vle8-test-blue
+=== Smoke-testing myapp:v2 (GREEN) container ===
+4875b697c5a03898540e45f6e4c30fee722b30f0b377ffa709f25952ddd82037
+{"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"4875b697c5a0","build":"green-v2","started_at":"2026-11-11T12:58:43Z"}
+
+{"app":"VLE-8 Blue-Green Deployment","color":"GREEN","selector":{"app":"myapp","color":"green"},"version":"v2","pod":"4875b697c5a0","build":"green-v2","started_at":"2026-11-11T12:58:43Z","release_note":"Green environment (v2) is active. This release introduces the updated Green theme and verified rollout candidate."}
+
+GREEN
+v2
+vle8-test-green
+=== Loading myapp:v1 and myapp:v2 into Minikube ===
+Loading myapp:v1 into Minikube via minikube image load...
+Loading myapp:v2 into Minikube via minikube image load...
+=== Verifying images inside Minikube containerd ===
+docker.io/library/myapp:v1                                                                                      application/vnd.docker.distribution.manifest.v2+json      sha256:b587f15ca8453b668510a99f715bfe1427330dec18913138729663dce2c6e0f3 20.0 MiB  linux/amd64                                                                                io.cri-containerd.image=managed                                 
+docker.io/library/myapp:v2                                                                                      application/vnd.docker.distribution.manifest.v2+json      sha256:31476d32251f44ec8b253cb879c1487644e4acfafd3012315e41c621b5db36b3 20.0 MiB  linux/amd64                                                                                io.cri-containerd.image=managed                                 

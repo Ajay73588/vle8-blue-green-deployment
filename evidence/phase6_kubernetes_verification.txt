@@ -1,0 +1,83 @@
+Warning: Permanently added 'i-07f04268b828911fc' (ED25519) to the list of known hosts.
+=== Step 1: Deploy Blue (myapp-blue + myapp-service) ===
+namespace/vle8-app created
+deployment.apps/myapp-blue created
+service/myapp-service created
+Waiting for deployment "myapp-blue" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "myapp-blue" rollout to finish: 1 of 2 updated replicas are available...
+deployment "myapp-blue" successfully rolled out
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES     SELECTOR
+deployment.apps/myapp-blue   2/2     2            2           8s    myapp        myapp:v1   app=myapp,color=blue
+
+NAME                              READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+pod/myapp-blue-58f57dcff9-9rm4s   1/1     Running   0          8s    10.244.0.3   minikube   <none>           <none>
+pod/myapp-blue-58f57dcff9-r74qm   1/1     Running   0          8s    10.244.0.4   minikube   <none>           <none>
+
+NAME                    TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+service/myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   8s    app=myapp,color=blue
+
+NAME                      ENDPOINTS                     AGE
+endpoints/myapp-service   10.244.0.3:80,10.244.0.4:80   7s
+=== Step 2: Deploy Green (myapp-green in parallel) ===
+namespace/vle8-app unchanged
+deployment.apps/myapp-green created
+Waiting for deployment "myapp-green" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "myapp-green" rollout to finish: 1 of 2 updated replicas are available...
+deployment "myapp-green" successfully rolled out
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES     SELECTOR
+deployment.apps/myapp-green   2/2     2            2           7s    myapp        myapp:v2   app=myapp,color=green
+
+NAME                               READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+pod/myapp-green-674f5bdbc6-m856h   1/1     Running   0          7s    10.244.0.6   minikube   <none>           <none>
+pod/myapp-green-674f5bdbc6-tt6fv   1/1     Running   0          7s    10.244.0.5   minikube   <none>           <none>
+=== Step 3: Required Kubernetes Verifications ===
+--- kubectl get nodes ---
+NAME       STATUS   ROLES           AGE    VERSION
+minikube   Ready    control-plane   2m4s   v1.37.0
+--- kubectl get deployments -n vle8-app ---
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+myapp-blue    2/2     2            2           15s
+myapp-green   2/2     2            2           7s
+--- kubectl get pods -n vle8-app -o wide ---
+NAME                           READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+myapp-blue-58f57dcff9-9rm4s    1/1     Running   0          15s   10.244.0.3   minikube   <none>           <none>
+myapp-blue-58f57dcff9-r74qm    1/1     Running   0          15s   10.244.0.4   minikube   <none>           <none>
+myapp-green-674f5bdbc6-m856h   1/1     Running   0          7s    10.244.0.6   minikube   <none>           <none>
+myapp-green-674f5bdbc6-tt6fv   1/1     Running   0          7s    10.244.0.5   minikube   <none>           <none>
+--- kubectl get services -n vle8-app ---
+NAME            TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   15s
+--- kubectl get endpoints -n vle8-app ---
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME            ENDPOINTS                     AGE
+myapp-service   10.244.0.3:80,10.244.0.4:80   14s
+=== Step 4: Verify Initial Live Traffic (via Nginx -> myapp-service) ===
+=== Kubernetes Cluster & Workload Status ===
+NAME       STATUS   ROLES           AGE    VERSION
+minikube   Ready    control-plane   2m5s   v1.37.0
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+myapp-blue    2/2     2            2           16s
+myapp-green   2/2     2            2           8s
+NAME                           READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+myapp-blue-58f57dcff9-9rm4s    1/1     Running   0          16s   10.244.0.3   minikube   <none>           <none>
+myapp-blue-58f57dcff9-r74qm    1/1     Running   0          16s   10.244.0.4   minikube   <none>           <none>
+myapp-green-674f5bdbc6-m856h   1/1     Running   0          8s    10.244.0.6   minikube   <none>           <none>
+myapp-green-674f5bdbc6-tt6fv   1/1     Running   0          8s    10.244.0.5   minikube   <none>           <none>
+NAME            TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+myapp-service   NodePort   10.96.174.64   <none>        80:30080/TCP   16s
+NAME            ENDPOINTS                     AGE
+myapp-service   10.244.0.3:80,10.244.0.4:80   15s
+=== Service Selector ===
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+{"app":"myapp","color":"blue"}
+=== Live HTTP Health & Info (http://127.0.0.1) ===
+Health: {"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"BLUE","version":"v1","pod":"myapp-blue-58f57dcff9-r74qm","build":"blue-v1","started_at":"2026-11-11T12:59:22Z"}
+Info:   {"app":"VLE-8 Blue-Green Deployment","color":"BLUE","selector":{"app":"myapp","color":"blue"},"version":"v1","pod":"myapp-blue-58f57dcff9-r74qm","build":"blue-v1","started_at":"2026-11-11T12:59:22Z","release_note":"Blue environment (v1) is serving stable baseline traffic routed by Kubernetes Service myapp-service."}
+Verification PASSED.
+=== Step 5: Verify Green Independently (without touching myapp-service) ===
+Testing Green deployment independently via kubectl port-forward (no production traffic change)...
+Independent Green /health response: {"status":"healthy","app":"VLE-8 Blue-Green Deployment","color":"GREEN","version":"v2","pod":"myapp-green-674f5bdbc6-tt6fv","build":"green-v2","started_at":"2026-11-11T12:59:30Z"}
+Independent Green verification PASSED without routing production traffic.
+--- Confirm Service selector unchanged ---
+{"app":"myapp","color":"blue"}

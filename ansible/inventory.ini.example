@@ -1,0 +1,10 @@
+# Example Ansible inventory using SSH-over-AWS-SSM (no inbound port 22 required).
+# Copy to inventory.ini and replace <INSTANCE_ID> with `terraform output -raw instance_id`.
+
+[jenkins_server]
+vle8-host ansible_host=<INSTANCE_ID>
+
+[jenkins_server:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/vle8-ed25519
+ansible_ssh_common_args='-o ProxyCommand="/bin/bash ./ssm-proxy.sh %h %p" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'

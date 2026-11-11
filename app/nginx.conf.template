@@ -1,0 +1,28 @@
+server {
+    listen 80 default_server;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Prevent browser caching during live Blue-Green switching and rollback demos
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    add_header Expires "0" always;
+    add_header X-Deployment-Color "__APP_COLOR__" always;
+    add_header X-Deployment-Version "__APP_VERSION__" always;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location = /health {
+        default_type application/json;
+        alias /usr/share/nginx/html/health.json;
+    }
+
+    location = /api/info {
+        default_type application/json;
+        alias /usr/share/nginx/html/info.json;
+    }
+}

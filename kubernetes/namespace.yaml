@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vle8-app
+  labels:
+    app: myapp
+    project: vle8-blue-green
